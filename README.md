@@ -86,6 +86,15 @@ I `scripts/update-status.mjs` kan du enkelt endre:
 - Ingen backend-køyring i produksjon og ingen runtime-hemmeligheiter er nødvendig for nettsida.
 - Data blir bygd i GitHub Actions via `scripts/update-status.mjs` og skrivne til `public/status.json`.
 
+## Enkel besøksstatistikk (sjølvhosta)
+
+For enkel, first-party sporing utan tredjeparts analytics:
+
+- Frontenden sender no ein liten pixel-request til `https://stats.tulent.no/track.php` per sidevisning.
+- Legg `self-hosted-analytics/track.php` og `self-hosted-analytics/stats.php` på ein eigen PHP-host (til dømes `stats.tulent.no`).
+- Les summering som JSON frå `https://stats.tulent.no/stats.php`.
+- Sjå `self-hosted-analytics/README.md` for oppsett.
+
 ## Vidare forbetring om du vil ha meir presisjon
 
 Dersom du seinare far tilgang til eit meir presist API med faktiske passasjerdata per anlop, er det berre a bytte ut passasjeroppslaget i `update-status.mjs`. Frontenden treng ikkje endrast.

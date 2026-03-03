@@ -5,6 +5,7 @@ const metaEl = document.getElementById('meta');
 const updatedEl = document.getElementById('updated');
 const shipsWrapEl = document.getElementById('ships-wrap');
 const shipsListEl = document.getElementById('ships');
+const VISIT_TRACKER_URL = 'https://stats.tulent.no/track.php';
 
 async function main() {
   try {
@@ -22,6 +23,8 @@ async function main() {
     explanationEl.textContent = 'Sjekk at status.json er generert, eller køyr oppdateringsscriptet på nytt.';
     metaEl.textContent = error instanceof Error ? error.message : 'Ukjent feil';
     updatedEl.textContent = '';
+  } finally {
+    trackVisit();
   }
 }
 
@@ -91,6 +94,28 @@ function formatTimestamp(isoString) {
 
 function pluralize(count, singular, plural) {
   return count === 1 ? singular : plural;
+}
+
+function trackVisit() {
+  if (!VISIT_TRACKER_URL) return;
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+
+  try {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    const pagePath = `${window.location.pathname}${window.location.search}`;
+    const params = new URLSearchParams({
+      path: pagePath,
+      ref: document.referrer || '',
+      lang: navigator.language || '',
+      tz: timezone,
+      t: String(Date.now()),
+    });
+
+    const pixel = new Image();
+    pixel.src = `${VISIT_TRACKER_URL}?${params.toString()}`;
+  } catch {
+    // Ignore tracking errors.
+  }
 }
 
 main();

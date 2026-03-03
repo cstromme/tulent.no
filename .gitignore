@@ -10,3 +10,5 @@ node_modules/
 *.pfx
 *.crt
 *.cer
+self-hosted-analytics/visits.sqlite
+self-hosted-analytics/visits.sqlite-*
