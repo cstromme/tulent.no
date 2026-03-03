@@ -5,7 +5,6 @@ const metaEl = document.getElementById('meta');
 const updatedEl = document.getElementById('updated');
 const shipsWrapEl = document.getElementById('ships-wrap');
 const shipsListEl = document.getElementById('ships');
-const localVisitsEl = document.getElementById('local-visits');
 const LOCAL_VISITS_KEY = 'tulent.local.pageviews';
 
 async function main() {
@@ -103,15 +102,8 @@ function incrementLocalVisitCount() {
     const current = Number.parseInt(raw ?? '0', 10);
     const next = Number.isFinite(current) && current > 0 ? current + 1 : 1;
     window.localStorage.setItem(LOCAL_VISITS_KEY, String(next));
-
-    if (localVisitsEl) {
-      const countLabel = new Intl.NumberFormat('nb-NO').format(next);
-      localVisitsEl.textContent = `Dine lokale sidevisningar på denne eininga: ${countLabel}.`;
-    }
   } catch {
-    if (localVisitsEl) {
-      localVisitsEl.textContent = '';
-    }
+    // Ignore local storage errors.
   }
 }
 
