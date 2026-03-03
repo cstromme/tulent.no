@@ -1,2 +1,12 @@
 node_modules/
 .DS_Store
+
+# Local environment and secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer

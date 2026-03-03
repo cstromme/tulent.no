@@ -80,6 +80,12 @@ I `scripts/update-status.mjs` kan du enkelt endre:
 - CruiseTimetables Alesund: `https://www.cruisetimetables.com/alesund-norway-cruise-ship-schedule.html`
 - CruiseDig Alesund arrivals: `https://cruisedig.com/ports/alesund-norway/arrivals`
 
+## Security
+
+- Løysinga er statisk på web: berre filer under `public/` blir publisert til GitHub Pages.
+- Ingen backend-køyring i produksjon og ingen runtime-hemmeligheiter er nødvendig for nettsida.
+- Data blir bygd i GitHub Actions via `scripts/update-status.mjs` og skrivne til `public/status.json`.
+
 ## Vidare forbetring om du vil ha meir presisjon
 
 Dersom du seinare far tilgang til eit meir presist API med faktiske passasjerdata per anlop, er det berre a bytte ut passasjeroppslaget i `update-status.mjs`. Frontenden treng ikkje endrast.
