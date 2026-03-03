@@ -22,8 +22,6 @@ Passasjertala er **om lag-tal**, ikkje fasit. Dei er brukte som eit praktisk ans
 - `public/index.html` - sjolve sida
 - `public/styles.css` - minimal styling
 - `public/app.js` - les `status.json` og renderer sida
-- `public/stats.html` - lokal stats-side med enkel login
-- `public/stats.js` - les lokal stats fra `localStorage`
 - `public/status.json` - generert dagsdata
 - `scripts/update-status.mjs` - hentar kjelder og bygg `status.json`
 - `.github/workflows/refresh-and-deploy.yml` - køyrer oppdatering kvar dag og deployar til GitHub Pages
@@ -87,17 +85,6 @@ I `scripts/update-status.mjs` kan du enkelt endre:
 - Løysinga er statisk på web: berre filer under `public/` blir publisert til GitHub Pages.
 - Ingen backend-køyring i produksjon og ingen runtime-hemmeligheiter er nødvendig for nettsida.
 - Data blir bygd i GitHub Actions via `scripts/update-status.mjs` og skrivne til `public/status.json`.
-
-## Enkel besøksstatistikk (GitHub Pages-kompatibel)
-
-For 100% statisk drift på GitHub Pages brukar sida no ein lokal teljar i nettlesaren (`localStorage`):
-
-- Tel sidevisingar per eining/nettlesar.
-- Lagrar data berre lokalt hos den besøkande.
-- Ingen backend eller tredjeparts analytics.
-- Eiga side for lokal visning: `public/stats.html` (passord-gate i nettlesaren).
-
-Merk: Dette er klientside-gating, ikkje ekte serverautentisering.
 
 ## Vidare forbetring om du vil ha meir presisjon
 
