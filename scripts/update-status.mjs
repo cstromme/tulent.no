@@ -35,41 +35,41 @@ const PHRASES = [
   {
     verdict: 'HEILT GREIT',
     messages: [
-      'I dag e det såpass rolig at du kan rusle i fred og ro utan å få rullekoffert i hælen.',
-      'Det e nesten mistenkelig stille i dag i sentrum. I dag kan du lett droppe Moa.',
-      'Rolig dag i byn. Du treng hverken albueplass eller fluktplan.'
+      'I dag e det såpass rolig at du kan rusle i fred og ro utan å få rullekoffert i hælen',
+      'Det e nesten mistenkelig stille i dag i sentrum. I dag kan du lett droppe Moa',
+      'Rolig dag i byn. Du treng hverken albueplass eller fluktplan'
     ]
   },
   {
     verdict: 'LITT TULENT',
     messages: [
-      'Det e litt liv i sentrum, men ikkje meir enn at du kan ta dej en kaffikopp i fred og ro.',
-      'Litt tulent e det no, men du treng ikkje stenge dej inne av den grunn.',
-      'Det svirra litt i gata i dag, men ikkje verre enn at det går an å oppføre sej normalt.'
+      'Det e litt liv i sentrum, men ikkje meir enn at du kan ta dej en kaffikopp i fred og ro',
+      'Litt tulent e det no, men du treng ikkje stenge dej inne av den grunn',
+      'Det svirra litt i gata i dag, men ikkje verre enn at det går an å oppføre sej normalt'
     ]
   },
   {
     verdict: 'TULENT',
     messages: [
-      'No begynne det å tetne til. Best å vere litt tidlig ute om du skal ut i sentrum.',
-      'Ja no e det tulent, men du overleve nok.',
-      'Det e såpass med cruisefolk i dag at du bør ha litt tålmod og god gangfart.'
+      'No begynne det å tetne til. Best å vere litt tidlig ute om du skal ut i sentrum',
+      'Ja no e det tulent, men du overleve nok',
+      'Det e såpass med cruisefolk i dag at du bør ha litt tålmod og god gangfart'
     ]
   },
   {
     verdict: 'MYKJE TULENT',
     messages: [
-      'I dag e det skikkeleg tulent. Ta djup pust og styr unna dei mest opplagte rutane.',
-      'No snakka vi kø, kø og litt meir kø. Best å planlegge før du fer ut.',
-      'Det e mykje tulent i dag. Sentrum blir ikkje akkurat privat eigedom for oss sunnmøringa.'
+      'I dag e det skikkeleg tulent. Ta djup pust og styr unna dei mest opplagte rutane',
+      'No snakka vi kø, kø og litt meir kø. Best å planlegge før du fer ut',
+      'Det e mykje tulent i dag. Sentrum blir ikkje akkurat privat eigedom for oss sunnmøringa'
     ]
   },
   {
     verdict: 'STEJKE TULENT',
     messages: [
-      'I dag e det stejke tulent. Best å halde sej heime, ja.',
-      'Stejke tulent i dag. Dette e ein sånn dag der du tek alt du treng før du går ut døra og håpe på det beste.',
-      'Det e fullt trykk i byn i dag. Om du ikkje må ut, so må du kanskje ikkje ut.'
+      'I dag e det stejke tulent. Best å halde sej heime, ja',
+      'Stejke tulent i dag. Dette e ein sånn dag der du tek alt du treng før du går ut døra og håpe på det beste',
+      'Det e fullt trykk i byn i dag. Om du ikkje må ut, so må du kanskje ikkje ut'
     ]
   }
 ];
@@ -189,8 +189,8 @@ async function main() {
       fallbackPassengers: CRUISEDIG_ARRIVALS_URL,
     },
     notes: [
-      'Skiplista kjem fra den offentlege mooringplanen til Ålesund havn.',
-      'Passasjertallet e estimert ut fra publiserte skipstall og skal lesast som sånn circa, ikkje fasit.'
+      'Skiplista kjem fra den offentlege mooringplanen til Ålesund havn',
+      'Passasjertallet e estimert ut fra publiserte skipstall og skal lesast som sånn circa, ikkje fasit'
     ]
   };
 
@@ -556,11 +556,11 @@ function buildAssessment({ targetDate, ships, knownPassengers, missingPassengerC
   if (ships.length === 0) {
     explanation = 'Ingen registrerte cruiseskip i dag.';
   } else if (missingPassengerCount === 0) {
-    explanation = `${ships.length} skip i havn i dag, og sånn circa ${formatNumber(knownPassengers)} cruisegjester.`;
+    explanation = `${ships.length} skip i havn i dag, og sånn circa ${formatNumber(knownPassengers)} cruisegjesta`;
   } else if (knownPassengers > 0) {
-    explanation = `${ships.length} skip i havn i dag. E fann passasjertall for ${ships.length - missingPassengerCount} av dem, så totalen e minimum ${formatNumber(knownPassengers)}.`;
+    explanation = `${ships.length} skip i havn i dag. E fann passasjertall for ${ships.length - missingPassengerCount} av dem, så totalen e minimum ${formatNumber(knownPassengers)}`;
   } else {
-    explanation = `${ships.length} skip i havn i dag, men passasjertalla mangla i kildene e bruka akkurat no.`;
+    explanation = `${ships.length} skip i havn i dag, men passasjertalla mangla i kildene e bruka akkurat no`;
   }
 
   const totalPassengersLabel = missingPassengerCount === 0

@@ -18,8 +18,8 @@ async function main() {
   } catch (error) {
     document.body.dataset.level = 'error';
     verdictEl.textContent = 'UVISST';
-    messageEl.textContent = 'E fekk ikkje henta dagens dom akkurat no.';
-    explanationEl.textContent = 'Sjekk at status.json er generert, eller køyr oppdateringsscriptet på nytt.';
+    messageEl.textContent = 'E fekk ikkje henta dagens dom akkurat no';
+    explanationEl.textContent = 'Sjekk at status.json er generert, eller kjør oppdateringsscriptet på nytt';
     metaEl.textContent = error instanceof Error ? error.message : 'Ukjent feil';
     updatedEl.textContent = '';
   }
