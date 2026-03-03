@@ -86,14 +86,13 @@ I `scripts/update-status.mjs` kan du enkelt endre:
 - Ingen backend-køyring i produksjon og ingen runtime-hemmeligheiter er nødvendig for nettsida.
 - Data blir bygd i GitHub Actions via `scripts/update-status.mjs` og skrivne til `public/status.json`.
 
-## Enkel besøksstatistikk (sjølvhosta)
+## Enkel besøksstatistikk (GitHub Pages-kompatibel)
 
-For enkel, first-party sporing utan tredjeparts analytics:
+For 100% statisk drift på GitHub Pages brukar sida no ein lokal teljar i nettlesaren (`localStorage`):
 
-- Frontenden sender no ein liten pixel-request til `https://stats.tulent.no/track.php` per sidevisning.
-- Legg `self-hosted-analytics/track.php` og `self-hosted-analytics/stats.php` på ein eigen PHP-host (til dømes `stats.tulent.no`).
-- Beskytt stats-endepunktet med `VISIT_STATS_KEY` (påkravd) og les summering med bearer-token mot `https://stats.tulent.no/stats.php`.
-- Sjå `self-hosted-analytics/README.md` for oppsett.
+- Tel sidevisingar per eining/nettlesar.
+- Lagrar data berre lokalt hos den besøkande.
+- Ingen backend eller tredjeparts analytics.
 
 ## Vidare forbetring om du vil ha meir presisjon
 
