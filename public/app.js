@@ -6,6 +6,7 @@ const updatedEl = document.getElementById('updated');
 const shipsWrapEl = document.getElementById('ships-wrap');
 const shipsListEl = document.getElementById('ships');
 const LOCAL_VISITS_KEY = 'tulent.local.pageviews';
+const LOCAL_STATS_KEY = 'tulent.local.stats.v1';
 
 async function main() {
   try {
@@ -98,9 +99,41 @@ function pluralize(count, singular, plural) {
 
 function incrementLocalVisitCount() {
   try {
+    const now = new Date().toISOString();
+    const dayKey = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Oslo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
+
+    const rawStats = window.localStorage.getItem(LOCAL_STATS_KEY);
+    const parsedStats = rawStats ? JSON.parse(rawStats) : {};
+    const stats = parsedStats && typeof parsedStats === 'object' ? parsedStats : {};
+
     const raw = window.localStorage.getItem(LOCAL_VISITS_KEY);
-    const current = Number.parseInt(raw ?? '0', 10);
-    const next = Number.isFinite(current) && current > 0 ? current + 1 : 1;
+    const legacyCount = Number.parseInt(raw ?? '0', 10);
+    const statsCount = Number.parseInt(String(stats.totalVisits ?? '0'), 10);
+    const baseCount = Math.max(
+      Number.isFinite(legacyCount) && legacyCount > 0 ? legacyCount : 0,
+      Number.isFinite(statsCount) && statsCount > 0 ? statsCount : 0
+    );
+    const next = baseCount + 1;
+
+    const daily = stats.dailyVisits && typeof stats.dailyVisits === 'object' ? stats.dailyVisits : {};
+    const dayCount = Number.parseInt(String(daily[dayKey] ?? '0'), 10);
+    daily[dayKey] = (Number.isFinite(dayCount) && dayCount > 0 ? dayCount : 0) + 1;
+
+    const firstVisitAt = typeof stats.firstVisitAt === 'string' && stats.firstVisitAt ? stats.firstVisitAt : now;
+    const updatedStats = {
+      version: 1,
+      totalVisits: next,
+      firstVisitAt,
+      lastVisitAt: now,
+      dailyVisits: daily,
+    };
+
+    window.localStorage.setItem(LOCAL_STATS_KEY, JSON.stringify(updatedStats));
     window.localStorage.setItem(LOCAL_VISITS_KEY, String(next));
   } catch {
     // Ignore local storage errors.
