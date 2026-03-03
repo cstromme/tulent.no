@@ -20,6 +20,7 @@ async function main() {
     verdictEl.textContent = 'UVISST';
     messageEl.textContent = 'E fekk ikkje henta dagens dom akkurat no';
     explanationEl.textContent = 'Sjekk at status.json er generert, eller kjør oppdateringsscriptet på nytt';
+    metaEl.hidden = false;
     metaEl.textContent = error instanceof Error ? error.message : 'Ukjent feil';
     updatedEl.textContent = '';
   }
@@ -33,9 +34,16 @@ function render(status) {
   messageEl.textContent = pickMessage(status);
   explanationEl.textContent = status.explanation;
 
-  const shipPart = `${status.shipsCount} ${pluralize(status.shipsCount, 'skip', 'skip')}`;
-  const passengerPart = `${status.totalPassengersLabel} cruisegjesta`;
-  metaEl.textContent = `${shipPart} - ${passengerPart}`;
+  const shipsCount = Number.parseInt(String(status.shipsCount ?? '0'), 10);
+  if (Number.isFinite(shipsCount) && shipsCount > 0) {
+    const shipPart = `${shipsCount} ${pluralize(shipsCount, 'skip', 'skip')}`;
+    const passengerPart = `${status.totalPassengersLabel} cruisegjesta`;
+    metaEl.textContent = `${shipPart} og ${passengerPart}`;
+    metaEl.hidden = false;
+  } else {
+    metaEl.textContent = '';
+    metaEl.hidden = true;
+  }
 
   updatedEl.textContent = `Sist oppdatert ${formatTimestamp(status.updatedAt)}`;
 
