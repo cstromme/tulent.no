@@ -33,11 +33,36 @@ function grouped_query(SQLite3 $db, string $sql): array
     return $rows;
 }
 
+function bearer_token(): string
+{
+    $auth = $_SERVER['HTTP_AUTHORIZATION'] ?? ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
+    if ($auth === '') {
+        return '';
+    }
+    if (preg_match('/^\s*Bearer\s+(.+)\s*$/i', $auth, $matches) !== 1) {
+        return '';
+    }
+    return trim($matches[1]);
+}
+
 $apiKey = getenv('VISIT_STATS_KEY') ?: '';
-$providedKey = $_GET['key'] ?? '';
-if ($apiKey !== '' && !hash_equals($apiKey, (string) $providedKey)) {
+$providedKey = bearer_token();
+if ($providedKey === '') {
+    $providedKey = (string) ($_GET['key'] ?? '');
+}
+
+if ($apiKey === '') {
+    http_response_code(503);
+    header('Content-Type: application/json; charset=utf-8');
+    header('X-Robots-Tag: noindex, nofollow');
+    echo json_encode(['error' => 'VISIT_STATS_KEY is not configured']);
+    exit;
+}
+
+if (!hash_equals($apiKey, $providedKey)) {
     http_response_code(403);
     header('Content-Type: application/json; charset=utf-8');
+    header('X-Robots-Tag: noindex, nofollow');
     echo json_encode(['error' => 'forbidden']);
     exit;
 }
@@ -125,6 +150,7 @@ $dailyLast14d = grouped_query(
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('X-Robots-Tag: noindex, nofollow');
 echo json_encode([
     'generatedAt' => gmdate('c'),
     'totalVisits' => $totalVisits,

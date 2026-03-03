@@ -22,14 +22,17 @@ Upload these two files to the web root for `stats.tulent.no`:
 
 They will create and use `visits.sqlite` in the same directory automatically.
 
-## 3) Optional stats endpoint protection
+## 3) Required stats endpoint protection
 
-`stats.php` supports an optional API key.
+`stats.php` now requires an API key.
 
-- Set environment variable: `VISIT_STATS_KEY=your-secret`
-- Read stats with: `https://stats.tulent.no/stats.php?key=your-secret`
+- Set environment variable on your PHP host: `VISIT_STATS_KEY=your-secret`
+- Read stats (recommended) with bearer token:
+  - `curl -H "Authorization: Bearer your-secret" https://stats.tulent.no/stats.php`
+- Query parameter fallback is still supported:
+  - `https://stats.tulent.no/stats.php?key=your-secret`
 
-If `VISIT_STATS_KEY` is not set, `stats.php` is public.
+If `VISIT_STATS_KEY` is not set, `stats.php` returns HTTP 503.
 
 ## 4) What is collected
 

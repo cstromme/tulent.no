@@ -92,7 +92,7 @@ For enkel, first-party sporing utan tredjeparts analytics:
 
 - Frontenden sender no ein liten pixel-request til `https://stats.tulent.no/track.php` per sidevisning.
 - Legg `self-hosted-analytics/track.php` og `self-hosted-analytics/stats.php` på ein eigen PHP-host (til dømes `stats.tulent.no`).
-- Les summering som JSON frå `https://stats.tulent.no/stats.php`.
+- Beskytt stats-endepunktet med `VISIT_STATS_KEY` (påkravd) og les summering med bearer-token mot `https://stats.tulent.no/stats.php`.
 - Sjå `self-hosted-analytics/README.md` for oppsett.
 
 ## Vidare forbetring om du vil ha meir presisjon
