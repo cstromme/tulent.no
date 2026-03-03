@@ -35,7 +35,7 @@ const PHRASES = [
   {
     verdict: 'HEILT GREIT',
     messages: [
-      'I dag e det såpass rolig at du kan gå opp trappene uten kø',
+      'I dag e det såpass rolig at du kan gå opp trappene uten å føle du står i kø før landskamp på Colorline',
       'Det e nesten mistenkelig stille i dag i sentrum. I dag kan du lett droppe Moa',
       'Rolig dag i byn. Softis på Stuen eller?'
     ]
