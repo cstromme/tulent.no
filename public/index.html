@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="nn">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Kor tulent det e i Ålesund i dag, basert på offentlig havneplan og publiserte skipstall">
+    <title>Tulent.no</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body data-level="loading">
+    <main class="shell">
+      <p class="eyebrow">Kor tulent e det i Ålesund i dag?</p>
+      <h1 id="verdict">LADAR</h1>
+      <p id="message" class="message">Vent litt no. E henta dagens dom.</p>
+      <p id="explanation" class="explanation"></p>
+      <p id="meta" class="meta"></p>
+
+      <details id="ships-wrap" class="ships-wrap" hidden>
+        <summary>Vis skipa</summary>
+        <ul id="ships" class="ships"></ul>
+      </details>
+    </main>
+
+    <footer class="footer">
+      <p id="updated"></p>
+      <p>Skiplista kjem fra Ålesund havn. Passasjertala e sånn circa.</p>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

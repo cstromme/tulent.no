@@ -1,0 +1,25 @@
+{
+  "siteTitle": "Kor tulent e det i Ålesund i dag?",
+  "location": "Alesund",
+  "date": "2026-03-03",
+  "dateLabel": "tysdag 3. mars 2026",
+  "level": 0,
+  "verdict": "HEILT GREIT",
+  "message": "Det e nesten mistenkeleg stille i dag. Ditta klare du fint utan å gå omveien via Moa.",
+  "explanation": "Ingen registrerte cruiseskip i dag.",
+  "shipsCount": 0,
+  "totalPassengers": 0,
+  "totalPassengersLabel": "ca. 0",
+  "missingPassengerCount": 0,
+  "updatedAt": "2026-03-03T09:34:43.815Z",
+  "ships": [],
+  "dataSources": {
+    "officialMooringplan": "https://alesund.havn.no/skipstrafikk/mooringplan-cruise/",
+    "dailyPassengers": null,
+    "fallbackPassengers": "https://cruisedig.com/ports/alesund-norway/arrivals"
+  },
+  "notes": [
+    "Skiplista kjem fra den offentlege mooringplanen til Ålesund havn.",
+    "Passasjertalet er estimert ut frå publiserte skipstal og skal lesast som sånn circa, ikkje fasit."
+  ]
+}
