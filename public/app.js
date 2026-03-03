@@ -37,7 +37,7 @@ function render(status) {
   const passengerPart = `${status.totalPassengersLabel} cruisegjesta`;
   metaEl.textContent = `${shipPart} - ${passengerPart}`;
 
-  updatedEl.textContent = `Sist oppdatert ${formatTimestamp(status.updatedAt)}.`;
+  updatedEl.textContent = `Sist oppdatert ${formatTimestamp(status.updatedAt)}`;
 
   shipsListEl.innerHTML = '';
   if (Array.isArray(status.ships) && status.ships.length > 0) {

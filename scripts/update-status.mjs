@@ -197,7 +197,7 @@ async function main() {
   await writeJson(STATUS_FILE, payload);
 
   console.log(`Wrote ${STATUS_FILE}`);
-  console.log(`${targetDate}: ${assessment.verdict} - ${assessment.totalPassengersLabel} cruisegjester - ${resolvedShips.length} skip`);
+  console.log(`${targetDate}: ${assessment.verdict} - ${assessment.totalPassengersLabel} cruisegjesta - ${resolvedShips.length} skip`);
 }
 
 function getArgValue(flag) {
