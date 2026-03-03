@@ -30,7 +30,7 @@ function render(status) {
   document.body.dataset.level = String(status.level);
 
   verdictEl.textContent = status.verdict;
-  messageEl.textContent = status.message;
+  messageEl.textContent = pickMessage(status);
   explanationEl.textContent = status.explanation;
 
   const shipPart = `${status.shipsCount} ${pluralize(status.shipsCount, 'skip', 'skip')}`;
@@ -59,6 +59,22 @@ function render(status) {
   } else {
     shipsWrapEl.hidden = true;
   }
+}
+
+function pickMessage(status) {
+  const messages = Array.isArray(status.messages)
+    ? status.messages.filter((entry) => typeof entry === 'string' && entry.trim().length > 0)
+    : [];
+
+  if (messages.length > 0) {
+    return messages[Math.floor(Math.random() * messages.length)];
+  }
+
+  if (typeof status.message === 'string' && status.message.trim().length > 0) {
+    return status.message;
+  }
+
+  return 'Ingen melding tilgjengeleg akkurat no.';
 }
 
 function formatTimestamp(isoString) {

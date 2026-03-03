@@ -36,8 +36,8 @@ const PHRASES = [
     verdict: 'HEILT GREIT',
     messages: [
       'I dag e det såpass rolig at du kan rusle i fred og ro utan å få rullekoffert i hælen.',
-      'Det e nesten mistenkeleg stille i dag. Ditta klare du fint utan å gå omveien via Moa.',
-      'Rolig dag i byn. Du treng korkje albogeplass eller fluktplan.'
+      'Det e nesten mistenkelig stille i dag. Ditta klare du fint utan å gå omveien via Moa.',
+      'Rolig dag i byn. Du treng hverken albueplass eller fluktplan.'
     ]
   },
   {
@@ -45,22 +45,22 @@ const PHRASES = [
     messages: [
       'Det e litt liv i sentrum, men ikkje meir enn at du kan ta dej en kaffikopp i fred og ro.',
       'Litt tulent e det no, men du treng ikkje stenge dej inne av den grunn.',
-      'Det svirra litt i gatene i dag, men ikkje verre enn at det går an å oppføre sej normalt.'
+      'Det svirra litt i gata i dag, men ikkje verre enn at det går an å oppføre sej normalt.'
     ]
   },
   {
     verdict: 'TULENT',
     messages: [
-      'No begynne det å tetne til. Best å vere litt tidleg ute om du skal ned i sentrum.',
+      'No begynne det å tetne til. Best å vere litt tidlig ute om du skal ut i sentrum.',
       'Ja no e det tulent, men du overleve nok.',
-      'Det e såpass med cruisefolk i dag at du bør ha litt tolmod og god gangfart.'
+      'Det e såpass med cruisefolk i dag at du bør ha litt tålmod og god gangfart.'
     ]
   },
   {
     verdict: 'MYKJE TULENT',
     messages: [
       'I dag e det skikkeleg tulent. Ta djup pust og styr unna dei mest opplagte rutane.',
-      'No snakka vi kø, kø og litt meir kø. Best å planlegge før du fer ned.',
+      'No snakka vi kø, kø og litt meir kø. Best å planlegge før du fer ut.',
       'Det e mykje tulent i dag. Sentrum blir ikkje akkurat privat eigedom for oss sunnmøringa.'
     ]
   },
@@ -168,7 +168,8 @@ async function main() {
     dateLabel: targetDateLabel,
     level: assessment.level,
     verdict: assessment.verdict,
-    message: assessment.message,
+    messages: assessment.messages,
+    message: assessment.messages[0],
     explanation: assessment.explanation,
     shipsCount: resolvedShips.length,
     totalPassengers: knownPassengers,
@@ -189,7 +190,7 @@ async function main() {
     },
     notes: [
       'Skiplista kjem fra den offentlege mooringplanen til Ålesund havn.',
-      'Passasjertalet er estimert ut frå publiserte skipstal og skal lesast som sånn circa, ikkje fasit.'
+      'Passasjertallet e estimert ut fra publiserte skipstall og skal lesast som sånn circa, ikkje fasit.'
     ]
   };
 
@@ -550,8 +551,6 @@ function buildAssessment({ targetDate, ships, knownPassengers, missingPassengerC
   }
 
   const phraseBucket = PHRASES[level];
-  const indexSeed = [...targetDate].reduce((sum, char) => sum + char.charCodeAt(0), 0) + ships.length;
-  const message = phraseBucket.messages[indexSeed % phraseBucket.messages.length];
 
   let explanation = '';
   if (ships.length === 0) {
@@ -559,9 +558,9 @@ function buildAssessment({ targetDate, ships, knownPassengers, missingPassengerC
   } else if (missingPassengerCount === 0) {
     explanation = `${ships.length} skip i havn i dag, og sånn circa ${formatNumber(knownPassengers)} cruisegjester.`;
   } else if (knownPassengers > 0) {
-    explanation = `${ships.length} skip i havn i dag. Eg fann passasjertal for ${ships.length - missingPassengerCount} av dei, så totalen e minimum ${formatNumber(knownPassengers)}.`;
+    explanation = `${ships.length} skip i havn i dag. E fann passasjertall for ${ships.length - missingPassengerCount} av dem, så totalen e minimum ${formatNumber(knownPassengers)}.`;
   } else {
-    explanation = `${ships.length} skip i havn i dag, men passasjertala manglar i kjeldene e bruka akkurat no.`;
+    explanation = `${ships.length} skip i havn i dag, men passasjertalla mangla i kildene e bruka akkurat no.`;
   }
 
   const totalPassengersLabel = missingPassengerCount === 0
@@ -571,7 +570,7 @@ function buildAssessment({ targetDate, ships, knownPassengers, missingPassengerC
   return {
     level,
     verdict: phraseBucket.verdict,
-    message,
+    messages: phraseBucket.messages,
     explanation,
     totalPassengersLabel,
   };
