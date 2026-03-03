@@ -36,7 +36,7 @@ const PHRASES = [
     verdict: 'HEILT GREIT',
     messages: [
       'I dag e det såpass rolig at du kan rusle i fred og ro utan å få rullekoffert i hælen.',
-      'Det e nesten mistenkelig stille i dag. Ditta klare du fint utan å gå omveien via Moa.',
+      'Det e nesten mistenkelig stille i dag i sentrum. I dag kan du lett droppe Moa.',
       'Rolig dag i byn. Du treng hverken albueplass eller fluktplan.'
     ]
   },
