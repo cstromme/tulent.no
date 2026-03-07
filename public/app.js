@@ -33,17 +33,8 @@ function render(status) {
   verdictEl.textContent = status.verdict;
   messageEl.textContent = pickMessage(status);
   explanationEl.textContent = status.explanation;
-
-  const shipsCount = Number.parseInt(String(status.shipsCount ?? '0'), 10);
-  if (Number.isFinite(shipsCount) && shipsCount > 0) {
-    const shipPart = `${shipsCount} ${pluralize(shipsCount, 'skip', 'skip')}`;
-    const passengerPart = `${status.totalPassengersLabel} cruisegjesta`;
-    metaEl.textContent = `${shipPart} og ${passengerPart}`;
-    metaEl.hidden = false;
-  } else {
-    metaEl.textContent = '';
-    metaEl.hidden = true;
-  }
+  metaEl.textContent = '';
+  metaEl.hidden = true;
 
   updatedEl.textContent = `Sist oppdatert ${formatTimestamp(status.updatedAt)}`;
 
@@ -95,10 +86,6 @@ function formatTimestamp(isoString) {
     hour: '2-digit',
     minute: '2-digit',
   }).format(date);
-}
-
-function pluralize(count, singular, plural) {
-  return count === 1 ? singular : plural;
 }
 
 main();
