@@ -19,6 +19,8 @@ body {
 body {
   min-height: 100vh;
   padding: 2rem;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.05), transparent 35%),
     var(--bg);
@@ -52,18 +54,20 @@ body[data-level="error"] {
 
 .shell {
   width: min(100%, 68rem);
-  min-height: calc(100vh - 8rem);
-  min-height: calc(100svh - 8rem);
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
+  padding: clamp(2rem, 6vh, 4rem) 0;
+  display: grid;
+  place-items: center;
   text-align: center;
 }
 
+.stage {
+  position: relative;
+  width: min(100%, 48rem);
+}
+
 .hero {
-  flex: 1 0 auto;
-  display: grid;
-  align-content: center;
+  display: block;
 }
 
 .eyebrow {
@@ -109,19 +113,24 @@ summary,
 }
 
 .ships-wrap {
+  position: absolute;
+  top: calc(100% + 1.5rem);
+  left: 50%;
   width: min(100%, 34rem);
-  margin: 2rem auto 0;
-  padding: 1rem 1.1rem;
+  transform: translateX(-50%);
   text-align: left;
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.03);
+  z-index: 1;
 }
 
 summary {
+  display: block;
   cursor: pointer;
   list-style: none;
   font-size: 0.95rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 summary::-webkit-details-marker {
@@ -137,9 +146,19 @@ details[open] summary::after {
 }
 
 .ships {
-  margin: 1rem 0 0;
-  padding: 0;
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0 1.1rem;
   list-style: none;
+  max-height: min(45vh, 22rem);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(17, 17, 17, 0.96);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.3);
 }
 
 .ships li {
@@ -148,6 +167,10 @@ details[open] summary::after {
   gap: 1rem;
   padding: 0.7rem 0;
   border-top: 1px solid var(--line);
+}
+
+.ships li:first-child {
+  border-top: 0;
 }
 
 .ship-name {
@@ -183,12 +206,19 @@ a.ship-name:focus-visible {
   }
 
   .shell {
-    min-height: calc(100vh - 5rem);
-    min-height: calc(100svh - 5rem);
+    padding: 1.5rem 0;
   }
 
   .ships li {
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .ships {
+    max-height: min(38vh, 18rem);
+  }
+
+  .ships-wrap {
+    top: calc(100% + 1.25rem);
   }
 }
