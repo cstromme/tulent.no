@@ -144,6 +144,17 @@ details[open] summary::after {
 
 .ship-name {
   font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+a.ship-name:visited {
+  color: var(--fg);
+}
+
+a.ship-name:hover,
+a.ship-name:focus-visible {
+  text-decoration: underline;
 }
 
 .footer {

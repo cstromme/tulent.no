@@ -42,9 +42,14 @@ function render(status) {
   if (Array.isArray(status.ships) && status.ships.length > 0) {
     for (const ship of status.ships) {
       const li = document.createElement('li');
-      const name = document.createElement('span');
+      const name = ship.infoUrl ? document.createElement('a') : document.createElement('span');
       name.className = 'ship-name';
       name.textContent = ship.name;
+      if (ship.infoUrl) {
+        name.href = ship.infoUrl;
+        name.target = '_blank';
+        name.rel = 'noreferrer noopener';
+      }
 
       const pax = document.createElement('span');
       pax.className = 'ship-pax';

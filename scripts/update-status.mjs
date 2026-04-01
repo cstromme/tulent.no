@@ -117,6 +117,22 @@ async function main() {
     }
   }
 
+  let cruiseMapperShipUrls = {};
+  let cruiseMapperPortUrl = null;
+  if (officialShips.length > 0) {
+    cruiseMapperPortUrl = buildCruiseMapperPortUrl(targetDate);
+    try {
+      const cruiseMapperPortHtml = await fetchText(cruiseMapperPortUrl, {
+        userAgent: BROWSER_USER_AGENT,
+        referer: CRUISEMAPPER_BASE,
+        accept: 'text/html,application/xhtml+xml',
+      });
+      cruiseMapperShipUrls = parseCruiseMapperPortSchedule(cruiseMapperPortHtml, targetDate, officialShips);
+    } catch (error) {
+      console.warn(`CruiseMapper ship lookup failed: ${error.message}`);
+    }
+  }
+
   let cruiseMapperPassengers = {};
   if (officialShips.length > 0) {
     const unresolvedShips = officialShips.filter((ship) =>
@@ -125,7 +141,7 @@ async function main() {
     );
     if (unresolvedShips.length > 0) {
       try {
-        cruiseMapperPassengers = await findCruiseMapperPassengers(targetDate, unresolvedShips);
+        cruiseMapperPassengers = await findCruiseMapperPassengers(cruiseMapperShipUrls, cruiseMapperPortUrl, unresolvedShips);
       } catch (error) {
         console.warn(`CruiseMapper lookup failed: ${error.message}`);
       }
@@ -137,6 +153,7 @@ async function main() {
     const fromDaily = getMappedValue(cruiseTimetablesPassengers, ship);
     const fromCruiseDig = getMappedValue(cruiseDigPassengers, ship);
     const fromCruiseMapper = getMappedValue(cruiseMapperPassengers, ship);
+    const infoUrl = getMappedValue(cruiseMapperShipUrls, ship) ?? null;
     const fromCache = capacityCache[normalized] ?? null;
 
     let passengers = null;
@@ -166,6 +183,7 @@ async function main() {
       normalizedName: normalized,
       passengers,
       source,
+      infoUrl,
       approximate,
     };
   });
@@ -204,13 +222,14 @@ async function main() {
       passengers: ship.passengers,
       passengersLabel: ship.passengers == null ? 'ukjent' : `ca. ${formatNumber(ship.passengers)}`,
       source: ship.source,
+      infoUrl: ship.infoUrl,
       approximate: ship.approximate,
     })),
     dataSources: {
       officialMooringplan: OFFICIAL_URL,
       dailyPassengers: cruiseTimetablesUrl,
       fallbackPassengers: CRUISEDIG_ARRIVALS_URL,
-      cruiseMapperPortSchedule: officialShips.length > 0 ? buildCruiseMapperPortUrl(targetDate) : null,
+      cruiseMapperPortSchedule: cruiseMapperPortUrl,
     },
     notes: [
       'Skiplista kjem fra den offentlege mooringplanen til Ålesund havn',
@@ -565,15 +584,8 @@ async function findCruiseDigPassengers(targetDate, ships) {
   return result;
 }
 
-async function findCruiseMapperPassengers(targetDate, ships) {
+async function findCruiseMapperPassengers(shipPageUrls, portUrl, ships) {
   const result = {};
-  const portUrl = buildCruiseMapperPortUrl(targetDate);
-  const portHtml = await fetchText(portUrl, {
-    userAgent: BROWSER_USER_AGENT,
-    referer: CRUISEMAPPER_BASE,
-    accept: 'text/html,application/xhtml+xml',
-  });
-  const shipPageUrls = parseCruiseMapperPortSchedule(portHtml, targetDate, ships);
   const shipPageCache = {};
 
   for (const ship of ships) {
