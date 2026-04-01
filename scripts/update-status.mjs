@@ -15,6 +15,10 @@ const STATUS_FILE = path.join(PUBLIC_DIR, 'status.json');
 const OFFICIAL_URL = 'https://alesund.havn.no/skipstrafikk/mooringplan-cruise/';
 const CRUISE_TIMETABLES_BASE = 'https://www.cruisetimetables.com';
 const CRUISEDIG_ARRIVALS_URL = 'https://cruisedig.com/ports/alesund-norway/arrivals';
+const CRUISEMAPPER_BASE = 'https://www.cruisemapper.com';
+const CRUISEMAPPER_PORT_URL = `${CRUISEMAPPER_BASE}/ports/alesund-port-156`;
+const DEFAULT_USER_AGENT = 'tulent.no/1.0 (+https://tulent.no)';
+const BROWSER_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
 
 const MONTH_SLUG = {
   '01': 'jan',
@@ -113,10 +117,26 @@ async function main() {
     }
   }
 
+  let cruiseMapperPassengers = {};
+  if (officialShips.length > 0) {
+    const unresolvedShips = officialShips.filter((ship) =>
+      getMappedValue(cruiseTimetablesPassengers, ship) == null &&
+      getMappedValue(cruiseDigPassengers, ship) == null
+    );
+    if (unresolvedShips.length > 0) {
+      try {
+        cruiseMapperPassengers = await findCruiseMapperPassengers(targetDate, unresolvedShips);
+      } catch (error) {
+        console.warn(`CruiseMapper lookup failed: ${error.message}`);
+      }
+    }
+  }
+
   const resolvedShips = officialShips.map((ship) => {
     const normalized = normalizeShipName(ship);
     const fromDaily = getMappedValue(cruiseTimetablesPassengers, ship);
     const fromCruiseDig = getMappedValue(cruiseDigPassengers, ship);
+    const fromCruiseMapper = getMappedValue(cruiseMapperPassengers, ship);
     const fromCache = capacityCache[normalized] ?? null;
 
     let passengers = null;
@@ -129,6 +149,9 @@ async function main() {
     } else if (fromCruiseDig != null) {
       passengers = fromCruiseDig;
       source = 'CruiseDig';
+    } else if (fromCruiseMapper != null) {
+      passengers = fromCruiseMapper;
+      source = 'CruiseMapper';
     } else if (fromCache != null) {
       passengers = fromCache;
       source = 'local cache';
@@ -187,6 +210,7 @@ async function main() {
       officialMooringplan: OFFICIAL_URL,
       dailyPassengers: cruiseTimetablesUrl,
       fallbackPassengers: CRUISEDIG_ARRIVALS_URL,
+      cruiseMapperPortSchedule: officialShips.length > 0 ? buildCruiseMapperPortUrl(targetDate) : null,
     },
     notes: [
       'Skiplista kjem fra den offentlege mooringplanen til Ålesund havn',
@@ -240,12 +264,26 @@ function buildCruiseTimetablesUrl(dateKey) {
   return `${CRUISE_TIMETABLES_BASE}/alesundnorwayschedule-${day}${monthSlug}${year}.html`;
 }
 
-async function fetchText(url) {
+function buildCruiseMapperPortUrl(dateKey) {
+  return `${CRUISEMAPPER_PORT_URL}?month=${dateKey.slice(0, 7)}`;
+}
+
+async function fetchText(url, options = {}) {
+  const headers = {
+    'user-agent': options.userAgent || DEFAULT_USER_AGENT,
+    'accept-language': 'en,nb-NO;q=0.9,no-NO;q=0.8',
+  };
+
+  if (options.accept) {
+    headers.accept = options.accept;
+  }
+
+  if (options.referer) {
+    headers.referer = options.referer;
+  }
+
   const response = await fetch(url, {
-    headers: {
-      'user-agent': 'tulent.no/1.0 (+https://tulent.no)',
-      'accept-language': 'en,nb-NO;q=0.9,no-NO;q=0.8',
-    },
+    headers,
     signal: AbortSignal.timeout(20_000),
   });
 
@@ -525,6 +563,133 @@ async function findCruiseDigPassengers(targetDate, ships) {
   }
 
   return result;
+}
+
+async function findCruiseMapperPassengers(targetDate, ships) {
+  const result = {};
+  const portUrl = buildCruiseMapperPortUrl(targetDate);
+  const portHtml = await fetchText(portUrl, {
+    userAgent: BROWSER_USER_AGENT,
+    referer: CRUISEMAPPER_BASE,
+    accept: 'text/html,application/xhtml+xml',
+  });
+  const shipPageUrls = parseCruiseMapperPortSchedule(portHtml, targetDate, ships);
+  const shipPageCache = {};
+
+  for (const ship of ships) {
+    const shipUrl = getMappedValue(shipPageUrls, ship);
+    if (!shipUrl) {
+      continue;
+    }
+
+    if (shipPageCache[shipUrl] == null) {
+      const shipHtml = await fetchText(shipUrl, {
+        userAgent: BROWSER_USER_AGENT,
+        referer: portUrl,
+        accept: 'text/html,application/xhtml+xml',
+      });
+      shipPageCache[shipUrl] = parseCruiseMapperPassengerCount(shipHtml);
+    }
+
+    const passengers = shipPageCache[shipUrl];
+    if (passengers != null) {
+      result[normalizeShipName(ship)] = passengers;
+    }
+  }
+
+  return result;
+}
+
+function parseCruiseMapperPortSchedule(html, targetDate, ships) {
+  const $ = cheerio.load(html);
+  const result = {};
+  const targetDateLabel = formatCruiseMapperDate(targetDate);
+
+  $('table.portItemSchedule tbody tr').each((_, row) => {
+    const cells = $(row).find('td');
+    if (cells.length < 2) {
+      return;
+    }
+
+    const dateText = $(cells[0]).find('span').first().text().replace(/\s+/g, ' ').trim();
+    if (dateText !== targetDateLabel) {
+      return;
+    }
+
+    const shipLink = $(cells[1]).find('a[href*="/ships/"]').first();
+    const shipName = shipLink.text().replace(/\s+/g, ' ').trim();
+    const href = shipLink.attr('href');
+    if (!shipName || !href) {
+      return;
+    }
+
+    for (const ship of ships) {
+      const normalized = normalizeShipName(ship);
+      if (result[normalized]) {
+        continue;
+      }
+
+      if (sameShipName(shipName, ship)) {
+        result[normalized] = new URL(href, CRUISEMAPPER_BASE).toString();
+      }
+    }
+  });
+
+  return result;
+}
+
+function parseCruiseMapperPassengerCount(html) {
+  const $ = cheerio.load(html);
+  let passengers = null;
+
+  $('table tr').each((_, row) => {
+    const cells = $(row).find('td');
+    if (cells.length < 2) {
+      return;
+    }
+
+    const label = $(cells[0]).text().replace(/\s+/g, ' ').trim();
+    if (!/^Passengers$/i.test(label)) {
+      return;
+    }
+
+    passengers = parseCruiseMapperCapacity($(cells[1]).text().replace(/\s+/g, ' ').trim());
+    return false;
+  });
+
+  return passengers;
+}
+
+function parseCruiseMapperCapacity(value) {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  const rangeMatch = normalized.match(/^(\d{1,3}(?:[.,]\d{3})*|\d+)\s*(?:-|–|—|to)\s*(\d{1,3}(?:[.,]\d{3})*|\d+)$/i);
+  if (rangeMatch) {
+    const first = Number(rangeMatch[1].replace(/[.,]/g, ''));
+    const second = Number(rangeMatch[2].replace(/[.,]/g, ''));
+    return Math.max(first, second);
+  }
+
+  return parsePassengerLine(normalized);
+}
+
+function formatCruiseMapperDate(dateKey) {
+  const [year, month, day] = dateKey.split('-');
+  const monthNames = {
+    '01': 'January',
+    '02': 'February',
+    '03': 'March',
+    '04': 'April',
+    '05': 'May',
+    '06': 'June',
+    '07': 'July',
+    '08': 'August',
+    '09': 'September',
+    '10': 'October',
+    '11': 'November',
+    '12': 'December',
+  };
+
+  return `${Number(day)} ${monthNames[month]}, ${year}`;
 }
 
 function getMappedValue(map, shipName) {

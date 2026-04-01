@@ -11,7 +11,8 @@ Sida brukar ein offentlig hamneplan for a finne kva cruiseskip som faktisk er ve
 1. **Alesund havn** er kjelda for kva skip som er venta den dagen.
 2. **CruiseTimetables** blir brukt for dagsspesifikke passasjertal.
 3. **CruiseDig** blir brukt som fallback dersom dagssida manglar eller eit skip ikkje blir matchet.
-4. **data/ship-capacities.json** fungerer som lokal reservecache for skip som allereie er kjende.
+4. **CruiseMapper** blir brukt som ekstra fallback for skip som framleis manglar passasjertal.
+5. **data/ship-capacities.json** fungerer som lokal reservecache for skip som allereie er kjende.
 
 ### Viktig presisering
 
@@ -79,6 +80,7 @@ I `scripts/update-status.mjs` kan du enkelt endre:
 - Alesund havn mooringplan: `https://alesund.havn.no/skipstrafikk/mooringplan-cruise/`
 - CruiseTimetables Alesund: `https://www.cruisetimetables.com/alesund-norway-cruise-ship-schedule.html`
 - CruiseDig Alesund arrivals: `https://cruisedig.com/ports/alesund-norway/arrivals`
+- CruiseMapper Alesund port schedule: `https://www.cruisemapper.com/ports/alesund-port-156`
 
 ## Security
 
