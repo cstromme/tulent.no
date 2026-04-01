@@ -54,7 +54,9 @@ body[data-level="error"] {
 
 .shell {
   width: min(100%, 68rem);
-  margin: auto;
+  margin: 0 auto;
+  padding-top: clamp(2rem, 8vh, 6rem);
+  align-self: start;
   text-align: center;
 }
 
