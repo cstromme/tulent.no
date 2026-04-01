@@ -19,8 +19,6 @@ body {
 body {
   min-height: 100vh;
   padding: 2rem;
-  display: grid;
-  grid-template-rows: 1fr auto;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.05), transparent 35%),
     var(--bg);
@@ -54,10 +52,18 @@ body[data-level="error"] {
 
 .shell {
   width: min(100%, 68rem);
+  min-height: calc(100vh - 8rem);
+  min-height: calc(100svh - 8rem);
   margin: 0 auto;
-  padding-top: clamp(2rem, 8vh, 6rem);
-  align-self: start;
+  display: flex;
+  flex-direction: column;
   text-align: center;
+}
+
+.hero {
+  flex: 1 0 auto;
+  display: grid;
+  align-content: center;
 }
 
 .eyebrow {
@@ -174,6 +180,11 @@ a.ship-name:focus-visible {
 @media (max-width: 640px) {
   body {
     padding: 1.25rem;
+  }
+
+  .shell {
+    min-height: calc(100vh - 5rem);
+    min-height: calc(100svh - 5rem);
   }
 
   .ships li {
